@@ -4,4 +4,6 @@
 
 return [
     '_preview_error' => [['code', '_format'], ['_controller' => 'error_controller::preview', '_format' => 'html'], ['code' => '\\d+'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', '\\d+', 'code', true], ['text', '/_error']], [], [], []],
+    'api_webhooktelegram' => [[], ['_controller' => 'App\\Controller\\TelegramInputController::input'], [], [['text', '/api/webhook/telegram']], [], [], []],
+    'App\Controller\TelegramInputController::input' => [[], ['_controller' => 'App\\Controller\\TelegramInputController::input'], [], [['text', '/api/webhook/telegram']], [], [], []],
 ];

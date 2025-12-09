@@ -19,7 +19,7 @@ class OrmConfig
     private $entityManagers;
     private $resolveTargetEntities;
     private $_usedProperties = [];
-    
+
     /**
      * @default null
      * @param ParamConfigurator|mixed $value
@@ -29,10 +29,10 @@ class OrmConfig
     {
         $this->_usedProperties['defaultEntityManager'] = true;
         $this->defaultEntityManager = $value;
-    
+
         return $this;
     }
-    
+
     /**
      * no-op, will be deprecated and removed in the future
      * @default true
@@ -43,10 +43,10 @@ class OrmConfig
     {
         $this->_usedProperties['enableNativeLazyObjects'] = true;
         $this->enableNativeLazyObjects = $value;
-    
+
         return $this;
     }
-    
+
     /**
      * @default {"enabled":true,"auto_mapping":false,"evict_cache":false}
     */
@@ -58,10 +58,10 @@ class OrmConfig
         } elseif (0 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "controllerResolver()" has already been initialized. You cannot pass values the second time you call controllerResolver().');
         }
-    
+
         return $this->controllerResolver;
     }
-    
+
     public function entityManager(string $name, array $value = []): \Symfony\Config\Doctrine\Orm\EntityManagerConfig
     {
         if (!isset($this->entityManagers[$name])) {
@@ -70,10 +70,10 @@ class OrmConfig
         } elseif (1 < \func_num_args()) {
             throw new InvalidConfigurationException('The node created by "entityManager()" has already been initialized. You cannot pass values the second time you call entityManager().');
         }
-    
+
         return $this->entityManagers[$name];
     }
-    
+
     /**
      * @return $this
      */
@@ -81,10 +81,10 @@ class OrmConfig
     {
         $this->_usedProperties['resolveTargetEntities'] = true;
         $this->resolveTargetEntities[$interface] = $value;
-    
+
         return $this;
     }
-    
+
     public function __construct(array $value = [])
     {
         if (array_key_exists('default_entity_manager', $value)) {
@@ -92,36 +92,36 @@ class OrmConfig
             $this->defaultEntityManager = $value['default_entity_manager'];
             unset($value['default_entity_manager']);
         }
-    
+
         if (array_key_exists('enable_native_lazy_objects', $value)) {
             $this->_usedProperties['enableNativeLazyObjects'] = true;
             $this->enableNativeLazyObjects = $value['enable_native_lazy_objects'];
             unset($value['enable_native_lazy_objects']);
         }
-    
+
         if (array_key_exists('controller_resolver', $value)) {
             $this->_usedProperties['controllerResolver'] = true;
             $this->controllerResolver = new \Symfony\Config\Doctrine\Orm\ControllerResolverConfig($value['controller_resolver']);
             unset($value['controller_resolver']);
         }
-    
+
         if (array_key_exists('entity_managers', $value)) {
             $this->_usedProperties['entityManagers'] = true;
             $this->entityManagers = array_map(fn ($v) => new \Symfony\Config\Doctrine\Orm\EntityManagerConfig($v), $value['entity_managers']);
             unset($value['entity_managers']);
         }
-    
+
         if (array_key_exists('resolve_target_entities', $value)) {
             $this->_usedProperties['resolveTargetEntities'] = true;
             $this->resolveTargetEntities = $value['resolve_target_entities'];
             unset($value['resolve_target_entities']);
         }
-    
+
         if ([] !== $value) {
             throw new InvalidConfigurationException(sprintf('The following keys are not supported by "%s": ', __CLASS__).implode(', ', array_keys($value)));
         }
     }
-    
+
     public function toArray(): array
     {
         $output = [];
@@ -140,7 +140,7 @@ class OrmConfig
         if (isset($this->_usedProperties['resolveTargetEntities'])) {
             $output['resolve_target_entities'] = $this->resolveTargetEntities;
         }
-    
+
         return $output;
     }
 

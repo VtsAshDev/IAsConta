@@ -13,9 +13,9 @@ Antes da lógica, precisamos da casa arrumada.
     - [x] Instalar o pacote `symfony/http-client` (para requisições externas).
     - [x] Instalar o `symfony/maker-bundle` (para criar classes rápido).
 
-- [ ] **Credenciais e Segurança**
-    - [ ] Criar Bot no Telegram (@BotFather) e pegar o Token.
-    - [ ] Pegar API Key da OpenAI.
+- [x] **Credenciais e Segurança**
+    - [x] Criar Bot no Telegram (@BotFather) e pegar o Token.
+    - [x] Pegar API Key do Gemini.
     - [ ] Configurar variáveis sensíveis no arquivo `.env` (NUNCA subir isso pro GitHub).
 
 ---

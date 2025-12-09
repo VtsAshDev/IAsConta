@@ -8,6 +8,7 @@
 return [
     false, // $matchHost
     [ // $staticRoutes
+        '/api/webhook/telegram' => [[['_route' => 'api_webhooktelegram', '_controller' => 'App\\Controller\\TelegramInputController::input'], null, ['POST' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
