@@ -111,6 +111,7 @@
       <tag name="container.service_subscriber"/>
       <argument type="service" id="logger"/>
       <argument type="service" id="http_client.uri_template"/>
+      <argument type="service" id="App\Service\AiService"/>
       <argument>%env(TELEGRAM_API)%</argument>
       <call method="setContainer">
         <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\TelegramInputController"/>
@@ -127,6 +128,10 @@
     </service>
     <service id="App\Dto\Telegram\UserDto" class="App\Dto\Telegram\UserDto" autowire="true" autoconfigure="true">
       <tag name="container.error" message="Cannot autowire service &quot;App\Dto\Telegram\UserDto&quot;: argument &quot;$id&quot; of method &quot;__construct()&quot; is type-hinted &quot;int&quot;, you should configure its value explicitly."/>
+    </service>
+    <service id="App\Service\AiService" class="App\Service\AiService" autowire="true" autoconfigure="true">
+      <argument type="service" id="http_client.uri_template"/>
+      <argument>%env(GEMINI_API)%</argument>
     </service>
     <service id="argument_metadata_factory" class="Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory"/>
     <service id="argument_resolver.backed_enum_resolver" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\BackedEnumValueResolver">

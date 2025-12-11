@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Telegram\TelegramUpdateDto;
+use App\Service\AiService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -19,6 +20,7 @@ class TelegramInputController extends AbstractController
     public function __construct(
        private LoggerInterface $logger,
        private HttpClientInterface $httpClient,
+       private AiService $aiService,
        #[Autowire(env: 'TELEGRAM_API')]
        private string $botToken
     ){
@@ -39,6 +41,7 @@ class TelegramInputController extends AbstractController
             $this->logger->info("Telegram Payload: ", (array)$update);
 
             $mensagemDeVolta = "Olá, $user! Recebi sua mensagem: $text";
+            $mensagemDeVolta = ($this->aiService)($message->getText());
             $this->logger->info("Log Message : $mensagemDeVolta");
             try {
                 $this->httpClient->request('POST', 'https://api.telegram.org/bot' . $this->botToken . '/sendMessage', [

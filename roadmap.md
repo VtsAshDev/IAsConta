@@ -16,22 +16,22 @@ Antes da lógica, precisamos da casa arrumada.
 - [x] **Credenciais e Segurança**
     - [x] Criar Bot no Telegram (@BotFather) e pegar o Token.
     - [x] Pegar API Key do Gemini.
-    - [ ] Configurar variáveis sensíveis no arquivo `.env` (NUNCA subir isso pro GitHub).
+    - [x] Configurar variáveis sensíveis no arquivo `.env` (NUNCA subir isso pro GitHub).
 
 ---
 
 ## 📡 Fase 2: O Ouvido (Integração com Telegram)
 Fazer o Symfony escutar e responder mensagens básicas.
 
-- [ ] **Configuração do Webhook**
-    - [ ] Criar Rota (Controller) no Symfony para receber POSTs.
-    - [ ] Configurar ferramenta de túnel (Ngrok) para expor o localhost.
-    - [ ] Registrar a URL do Ngrok como Webhook na API do Telegram.
+- [x] **Configuração do Webhook**
+    - [x] Criar Rota (Controller) no Symfony para receber POSTs.
+    - [x] Configurar ferramenta de túnel (Ngrok) para expor o localhost.
+    - [x] Registrar a URL do Ngrok como Webhook na API do Telegram.
 
-- [ ] **Processamento de Mensagens**
-    - [ ] Criar lógica para receber JSON do Telegram.
-    - [ ] Identificar quem enviou (Chat ID) e o tipo de mensagem (Texto vs Foto).
-    - [ ] Implementar resposta simples de texto ("Olá, recebi sua mensagem").
+- [x] **Processamento de Mensagens**
+    - [x] Criar lógica para receber JSON do Telegram.
+    - [x] Identificar quem enviou (Chat ID) e o tipo de mensagem (Texto vs Foto).
+    - [x] Implementar resposta simples de texto ("Olá, recebi sua mensagem").
 
 ---
 
@@ -43,8 +43,8 @@ A mágica de transformar imagem em dados estruturados.
     - [ ] Resgatar o `file_path` da imagem na API do Telegram.
     - [ ] Fazer o download temporário da imagem ou preparar a URL pública para a IA.
 
-- [ ] **Serviço de Inteligência (OpenAI)**
-    - [ ] Criar Service dedicado para comunicação com OpenAI.
+- [ ] **Serviço de Inteligência (Gemini)**
+    - [ ] Criar Service dedicado para comunicação com Gemini.
     - [ ] Implementar chamada para o modelo GPT-Vision (gpt-4o ou similar).
     - [ ] **Engenharia de Prompt:** Criar instrução para retornar APENAS JSON (Data, Valor, Local).
     - [ ] Tratar a resposta da IA e converter de string JSON para Array PHP.
