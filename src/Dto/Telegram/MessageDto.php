@@ -10,14 +10,16 @@ class MessageDto
      #[SerializedName('message_id')]
      private int $messageId,
 
-     private ChatDto $chat,
+     private ?ChatDto $chat = null,
 
      #[SerializedName('from')]
      private ?UserDto $user,
 
+     private ?ContactDto $contact = null,
+
      private ?string $text = null,
 
-     public int $date,
+     public ?int $date = null,
     ) {
     }
 
@@ -34,6 +36,16 @@ class MessageDto
     public function getUser(): ?UserDto
     {
         return $this->user;
+    }
+
+    public function getContact(): ?ContactDto
+    {
+        return $this->contact;
+    }
+
+    public function setContact(?ContactDto $contact): void
+    {
+        $this->contact = $contact;
     }
 
     public function getText(): ?string

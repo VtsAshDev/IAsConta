@@ -5,17 +5,17 @@ namespace App\Dto\Telegram;
 class ChatDto
 {
     public function __construct(
-        private int $id,
-        private string $type,
+        private ?int $id = null,
+        private ?string $type = null,
     ) {
     }
 
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
