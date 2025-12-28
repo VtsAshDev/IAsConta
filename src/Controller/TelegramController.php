@@ -4,30 +4,30 @@ namespace App\Controller;
 
 use App\Builder\TelegramUserBuilder;
 use App\Dto\Telegram\TelegramUpdateDto;
+use App\Message\ProcessExpenseMessage;
 use App\Repository\TelegramUserRepository;
-use App\Service\AiService;
 use App\Service\TelegramService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 #[Route('/api/webhook', name: 'api_webhook', methods: ['POST', 'GET'])]
 class TelegramController extends AbstractController
 {
     public function __construct(
         private LoggerInterface $logger,
-        private AiService $aiService,
         private TelegramService $telegramService,
-        private TelegramUserRepository $repository
+        private TelegramUserRepository $repository,
     ) {
     }
 
     #[Route('/telegram', name: 'telegram', methods: ['POST'])]
     public function input(
-        #[MapRequestPayload] TelegramUpdateDto $update
+        #[MapRequestPayload] TelegramUpdateDto $update,
+        MessageBusInterface $bus
     ): Response {
         $message = $update->getMessage();
 
@@ -73,12 +73,15 @@ class TelegramController extends AbstractController
 
             $this->logger->info("Mensagem recebida de $userName: $text");
 
-            $respostaAi = ($this->aiService)($text);
+            if ($text = $message->getText()) {
 
-            try {
-                $this->telegramService->sendMessage($chatId, $respostaAi);
-            } catch (\Exception $e) {
-                $this->logger->error("Erro ao enviar mensagem: " . $e->getMessage());
+                $bus->dispatch(new ProcessExpenseMessage(
+                    $text,
+                    $chatId,
+                    $telegramUserId
+                ));
+
+                $this->telegramService->sendMessage($chatId, "Estou processando seu gasto... ⏳");
             }
         }
 

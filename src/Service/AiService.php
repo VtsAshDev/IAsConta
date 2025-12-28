@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Service\CategoryService\CategoryService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Psr\Log\LoggerInterface;
 
 class AiService
 {
@@ -12,84 +13,76 @@ class AiService
         private HttpClientInterface $client,
         #[Autowire(env: 'GEMINI_API')]
         private string $apiKey,
-        private CategoryService $categoryService
+        private CategoryService $categoryService,
+        private LoggerInterface $logger
     ){
     }
 
-    public function __invoke(string $message)
+    public function __invoke(string $message): ?array
     {
-
         $categories = $this->categoryService->findAllAsText();
 
         $promptInstruction = "
-            Você é um assistente financeiro de um app 'for dummies'.
-            Sua tarefa é converter frases em dados estruturados.
+            Você é um assistente financeiro.
+            Sua tarefa é converter frases em dados estruturados (JSON).
 
             LISTA DE CATEGORIAS PERMITIDAS: [{$categories}].
 
             REGRAS:
             1. O campo 'categoria' DEVE ser EXATAMENTE um dos nomes da lista acima.
-            2. Se o gasto não se encaixar perfeitamente, escolha a categoria mais próxima ou 'Outros'.
-            3. No campo 'descricao', limpe o texto (Ex: 'Comi um burger' vira 'Burger').
-            4. Se o texto não for um gasto (ex: 'Olá', 'Tudo bem?'), retorne apenas 'null'.
-            5. Retorne APENAS o JSON, sem explicações.
+            2. No campo 'descricao', limpe o texto.
+            3. Se o texto não for um gasto (ex: 'Olá'), retorne null.
+            4. Retorne APENAS o JSON puro.
 
             FORMATO JSON:
             {
               \"descricao\": \"string\",
-              \"valor\": float,
-              \"categoria\": \"string\",
+              \"valor\": \"string\",
+              \"categoria\": \"string\"
             }
         ";
 
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=' . $this->apiKey;
 
         try {
-            $response = $this->client->request(
-                'POST',
-                $url,
-                [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
+            $response = $this->client->request('POST', $url, [
+                'json' => [
+                    'contents' => [
+                        ['parts' => [['text' => $promptInstruction . "\n\nTEXTO DO USUÁRIO: " . $message]]]
                     ],
-                    'json' => [
-                        'generationConfig' => [
-                            'responseMimeType' => 'application/json'
-                        ],
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $promptInstruction . "\n\nTEXTO DO USUÁRIO: " . $message],
-                                ]
-                            ]
-                        ]
-                    ],
+                    'generationConfig' => [
+                        'response_mime_type' => 'application/json'
+                    ]
                 ]
-            );
+            ]);
 
-            $data = $response->toArray();
-
-            if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-                return "Erro na API ou limite atingido.";
+            if ($response->getStatusCode() !== 200) {
+                throw new \Exception("Erro na API Gemini: " . $response->getStatusCode());
             }
 
-            $rawText = $data['candidates'][0]['content']['parts'][0]['text'];
+            $data = $response->toArray();
+            $rawText = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
 
-            $gasto = json_decode($rawText, true);
+            if (!$rawText) {
+                return null;
+            }
 
-            if ($gasto && isset($gasto['valor']) && $gasto['valor'] > 0){
-                return sprintf(
-                    "✅ Gasto de R$ %.2f registrado!\nItem: %s\nCategoria: %s",
-                    $gasto['valor'],
-                    $gasto['descricao'],
-                    $gasto['categoria']
-                );
+            $cleanJson = preg_replace('/^```json|```$/m', '', $rawText);
+            $gasto = json_decode(trim($cleanJson), true);
+
+            if (is_array($gasto) && isset($gasto['valor']) && (float)$gasto['valor'] > 0) {
+                return [
+                    'valor' => (float)$gasto['valor'],
+                    'descricao' => $gasto['descricao'] ?? 'Gasto sem descrição',
+                    'categoria' => $gasto['categoria'] ?? 'Outros',
+                ];
             }
 
         } catch (\Exception $e) {
-            return "Erro ao processar: " . $e->getCode();
+            $this->logger->error("Erro no AiService: " . $e->getMessage());
+            throw $e;
         }
 
-        return "Não entendi isso como um gasto. Tente: 'Uber 20 reais'.";
+        return null;
     }
 }

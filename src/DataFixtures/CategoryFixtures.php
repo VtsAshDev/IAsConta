@@ -12,14 +12,24 @@ class CategoryFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $categories = [
-            'Alimentação' => '🍔',
-            'Transporte'  => '🚗',
-            'Lazer'       => '🎉',
-            'Saúde'       => '💊',
-            'Moradia'     => '🏠',
-            'Educação'    => '📚',
-            'Trabalho'    => '💼',
-            'Outros'      => '📦'
+            'Alimentação'   => '🍔',
+            'Supermercado'  => '🛒',
+            'Transporte'    => '🚗',
+            'Moradia'       => '🏠',
+            'Contas Fixas'  => '🔌',
+            'Lazer'         => '🎉',
+            'Saúde'         => '💊',
+            'Educação'      => '📚',
+            'Assinaturas'   => '📺',
+            'Cuidados'      => '✂️',
+            'Compras'       => '🛍️',
+            'Pets'          => '🐾',
+            'Trabalho'      => '💼',
+            'Investimentos' => '📈',
+            'Presentes'     => '🎁',
+            'Viagens'       => '✈️',
+            'Dívidas'       => '💳',
+            'Outros'        => '📦'
         ];
 
         foreach ($categories as $name => $icon) {

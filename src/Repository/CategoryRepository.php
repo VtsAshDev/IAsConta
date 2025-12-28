@@ -17,5 +17,10 @@ class CategoryRepository extends ServiceEntityRepository
     {
         return $this->findBy([], ['name' => 'ASC']);
     }
+
+    public function findOneByName(string $name): ?Category
+    {
+        return $this->findOneBy(['name' => $name]);
+    }
 }
 
