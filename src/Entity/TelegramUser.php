@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 class TelegramUser
 {
     private ?int $id = null;
@@ -10,6 +13,12 @@ class TelegramUser
     private int $telegramId;
     private string $name;
     private ?string $phone = null;
+    private Collection $expenses;
+
+    public function __construct()
+    {
+        $this->expenses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -48,5 +57,8 @@ class TelegramUser
         return $this;
     }
 
-
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
 }

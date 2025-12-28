@@ -6,9 +6,9 @@
 
     <entity name="App\Entity\TelegramUser" table="telegram_user" repository-class="App\Repository\TelegramUserRepository">
         <id name="id" type="integer" column="id">
-            <generator strategy="AUTO"/>
+            <generator strategy="IDENTITY"/>
         </id>
-        <field name="telegramId" type="string" column="telegram_id" length="255" unique="true"/>
+        <field name="telegramId" type="bigint" column="telegram_id" length="255" unique="true"/>
         <field name="name" type="string" column="name" length="255"/>
         <field name="phone" type="string" column="phone" length="50" nullable="true"/>
     </entity>

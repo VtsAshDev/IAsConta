@@ -9,11 +9,11 @@
 !config/secrets/prod.env # Exceção: Mantém o arquivo de segredos criptografado de prod.
 
 /vendor/
-/var/ # Cobre /var/cache/, /var/log/, etc.
+/var/
 /public/bundles/
-/public/build/ # Assets gerados (Webpack Encore)
-/node_modules/ # Dependências JS/CSS
-/public/hot # Webpack Hot Module Replacement
+/public/build/
+/node_modules/
+/public/hot
 
 .idea/
 .vscode/
@@ -21,6 +21,9 @@
 Homestead.json
 Homestead.yaml
 
-/public/storage # Link simbólico (se usado)
-*.key # Chaves privadas
-*.log # Logs genéricos (se houver logs fora de /var/log/)
+/public/storage
+*.key
+*.log
+
+.DS_Store
+Thumbs.db

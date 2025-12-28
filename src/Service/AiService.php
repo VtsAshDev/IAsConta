@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Service\CategoryService\CategoryService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -11,15 +12,34 @@ class AiService
         private HttpClientInterface $client,
         #[Autowire(env: 'GEMINI_API')]
         private string $apiKey,
+        private CategoryService $categoryService
     ){
     }
 
     public function __invoke(string $message)
     {
+
+        $categories = $this->categoryService->findAllAsText();
+
         $promptInstruction = "
-            Você é um assistente financeiro. Analise o texto do usuário e extraia o gasto.
-            Retorne um JSON com as chaves: 'descricao' (string), 'valor' (float), 'categoria' (string), 'moeda' (string).
-            Se não identificar um gasto claro, retorne null no JSON.
+            Você é um assistente financeiro de um app 'for dummies'.
+            Sua tarefa é converter frases em dados estruturados.
+
+            LISTA DE CATEGORIAS PERMITIDAS: [{$categories}].
+
+            REGRAS:
+            1. O campo 'categoria' DEVE ser EXATAMENTE um dos nomes da lista acima.
+            2. Se o gasto não se encaixar perfeitamente, escolha a categoria mais próxima ou 'Outros'.
+            3. No campo 'descricao', limpe o texto (Ex: 'Comi um burger' vira 'Burger').
+            4. Se o texto não for um gasto (ex: 'Olá', 'Tudo bem?'), retorne apenas 'null'.
+            5. Retorne APENAS o JSON, sem explicações.
+
+            FORMATO JSON:
+            {
+              \"descricao\": \"string\",
+              \"valor\": float,
+              \"categoria\": \"string\",
+            }
         ";
 
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=' . $this->apiKey;
